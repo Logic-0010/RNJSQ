@@ -1,0 +1,31 @@
+﻿{
+    "description":  "实时计算肉牛增重、日粮成本、料肉比、造肉成本",
+    "short_name":  "肉牛TMR核算",
+    "background_color":  "#f0f4f8",
+    "icons":  [
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "192x192",
+                      "src":  "./icon-192.png"
+                  },
+                  {
+                      "purpose":  "any",
+                      "type":  "image/png",
+                      "sizes":  "512x512",
+                      "src":  "./icon-512.png"
+                  },
+                  {
+                      "purpose":  "maskable",
+                      "type":  "image/png",
+                      "sizes":  "512x512",
+                      "src":  "./icon-maskable-512.png"
+                  }
+              ],
+    "orientation":  "any",
+    "theme_color":  "#2e7d32",
+    "display":  "standalone",
+    "name":  "牧场肉牛进出栏管理 \u0026 TMR日粮核算工具",
+    "scope":  "./",
+    "start_url":  "./"
+}

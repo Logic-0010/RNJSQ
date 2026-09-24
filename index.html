@@ -377,7 +377,7 @@
                 </div>
 
                 <div class="card-title" style="margin-top:20px;">附加成本输入（元/头/天）</div>
-                <div class="note">💡 各项按**每头每天**填写，合计后自动纳入造肉成本计算</div>
+                <div class="note">💡 各项按**每头每天**填写，合计后自动纳入全成本计算</div>
                 <div class="extra-item">
                     <label class="form-label">👤 人工</label>
                     <input type="number" class="form-input extra-input" id="costLabor" placeholder="0.00" min="0" step="0.01">
@@ -488,14 +488,19 @@
                     <div class="result-value" id="fcr" style="color:#f57c00;">0<span class="unit">kg DM/kg 增重</span></div>
                 </div>
                 <div class="result-item highlight" style="border-left-color:#d32f2f;background:#ffebee;">
-                    <div class="result-label">造肉成本（日粮+五项附加成本）</div>
+                    <div class="result-label">造肉成本（日粮成本）</div>
                     <div class="result-value" id="meatCost" style="color:#d32f2f;">0<span class="unit">元/kg 增重</span></div>
+                </div>
+                <div class="result-item highlight" style="border-left-color:#6a1b9a;background:#f3e5f5;">
+                    <div class="result-label">全成本（日粮 + 五项附加成本）</div>
+                    <div class="result-value" id="totalCost" style="color:#6a1b9a;">0<span class="unit">元/kg 增重</span></div>
                 </div>
 
                 <div class="note" style="margin-top:20px;">
                     <strong>公式说明：</strong><br>
                     • 干物质料肉比 = 总干物质摄入量 ÷ 日增重<br>
-                    • 造肉成本 = (日粮日均成本 + 五项附加成本日均合计) ÷ 日增重<br>
+                    • 造肉成本 = 日粮日均成本 ÷ 日增重<br>
+                    • 全成本 = (日粮日均成本 + 五项附加成本日均合计) ÷ 日增重<br>
                     • TMR养分(CP/EE/ST)% = Σ(各原料干物质 × 养分%) ÷ 总干物质摄入量（干物质基础加权平均）
                 </div>
             </div>
@@ -685,9 +690,11 @@
             const fcr = dailyGain > 0 ? totalDM / dailyGain : 0;
             document.getElementById("fcr").innerHTML = `${fcr.toFixed(2)}<span class="unit">kg DM/kg 增重</span>`;
 
-            // 6. 造肉成本（日粮+五项附加）
-            const meatCost = dailyGain > 0 ? (totalDietCost + extraDaily) / dailyGain : 0;
+            // 6. 造肉成本（仅日粮） & 全成本（日粮 + 附加）
+            const meatCost = dailyGain > 0 ? totalDietCost / dailyGain : 0;
+            const totalCost = dailyGain > 0 ? (totalDietCost + extraDaily) / dailyGain : 0;
             document.getElementById("meatCost").innerHTML = `${meatCost.toFixed(2)}<span class="unit">元/kg 增重</span>`;
+            document.getElementById("totalCost").innerHTML = `${totalCost.toFixed(2)}<span class="unit">元/kg 增重</span>`;
         }
 
         // ============ 本地存储 ============

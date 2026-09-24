@@ -416,17 +416,20 @@
             <!-- 中间：TMR日粮配方编辑 -->
             <div class="card">
                 <div class="card-title">TMR日粮原料配方</div>
-                <div class="note">💡 默认干物质含量为行业参考值，可自行修改；添加量为**鲜重（kg/头/天）**</div>
-                <div style="max-height: 560px; overflow-y: auto;">
+                <div class="note">💡 默认干物质与养分（CP=粗蛋白、EE=粗脂肪、ST=淀粉，干物质基础）为行业参考值，均可自行修改；添加量为**鲜重（kg/头/天）**</div>
+                <div style="max-height: 560px; overflow-y: auto; overflow-x: auto;">
                     <table class="diet-table" id="dietTable">
                         <thead>
                             <tr>
-                                <th style="width:24%">原料名称</th>
-                                <th style="width:17%">添加量(kg鲜重)</th>
-                                <th style="width:15%">干物质(%)</th>
-                                <th style="width:16%">单价(元/kg)</th>
-                                <th style="width:14%">行成本(元)</th>
-                                <th style="width:14%">干物质(kg)</th>
+                                <th style="width:15%">原料名称</th>
+                                <th style="width:12%">添加量<br>(kg鲜重)</th>
+                                <th style="width:10%">干物质(%)</th>
+                                <th style="width:10%">CP(%)</th>
+                                <th style="width:10%">EE(%)</th>
+                                <th style="width:10%">ST(%)</th>
+                                <th style="width:12%">单价(元/kg)</th>
+                                <th style="width:10%">行成本(元)</th>
+                                <th style="width:11%">干物质(kg)</th>
                             </tr>
                         </thead>
                         <tbody id="dietBody"></tbody>
@@ -463,6 +466,18 @@
                     <div class="result-label">总干物质摄入量（DMI）</div>
                     <div class="result-value" id="dmi">0<span class="unit">kg DM/天</span></div>
                 </div>
+                <div class="result-item" style="background:#e3f2fd;border-left-color:#1976d2;">
+                    <div class="result-label">TMR日粮粗蛋白（CP，干物质基础）</div>
+                    <div class="result-value" id="dietCP" style="color:#1976d2;">0<span class="unit">%</span></div>
+                </div>
+                <div class="result-item" style="background:#e3f2fd;border-left-color:#1976d2;">
+                    <div class="result-label">TMR日粮粗脂肪（EE，干物质基础）</div>
+                    <div class="result-value" id="dietEE" style="color:#1976d2;">0<span class="unit">%</span></div>
+                </div>
+                <div class="result-item" style="background:#e3f2fd;border-left-color:#1976d2;">
+                    <div class="result-label">TMR日粮淀粉（ST，干物质基础）</div>
+                    <div class="result-value" id="dietST" style="color:#1976d2;">0<span class="unit">%</span></div>
+                </div>
                 <div class="result-item" style="background:#fff3e0;">
                     <div class="result-label">附加成本合计（每头每天）</div>
                     <div class="result-value" id="extraTotalDaily" style="color:#ef6c00;">0<span class="unit">元/天</span></div>
@@ -480,7 +495,8 @@
                 <div class="note" style="margin-top:20px;">
                     <strong>公式说明：</strong><br>
                     • 干物质料肉比 = 总干物质摄入量 ÷ 日增重<br>
-                    • 造肉成本 = (日粮日均成本 + 五项附加成本日均合计) ÷ 日增重
+                    • 造肉成本 = (日粮日均成本 + 五项附加成本日均合计) ÷ 日增重<br>
+                    • TMR养分(CP/EE/ST)% = Σ(各原料干物质 × 养分%) ÷ 总干物质摄入量（干物质基础加权平均）
                 </div>
             </div>
         </div>
@@ -490,39 +506,39 @@
         // ============ 原料数据库（按类别分组，新增专用饲料产品） ============
         const defaultRawMaterials = [
             { category: "🌿 粗饲料", items: [
-                { name: "小麦秸秆", dm: 90, price: 0.30, amount: 2.5 },
-                { name: "玉米秸秆", dm: 90, price: 0.25, amount: 0 },
-                { name: "全株玉米青贮", dm: 32, price: 0.30, amount: 15 },
-                { name: "黄贮", dm: 24, price: 0.28, amount: 0 },
+                { name: "小麦秸秆", dm: 90, cp: 4.2, ee: 1.4, st: 1.5, price: 0.30, amount: 2.5 },
+                { name: "玉米秸秆", dm: 90, cp: 5.5, ee: 1.5, st: 2.0, price: 0.25, amount: 0 },
+                { name: "全株玉米青贮", dm: 32, cp: 8.0, ee: 3.0, st: 28.0, price: 0.30, amount: 15 },
+                { name: "黄贮", dm: 24, cp: 6.0, ee: 2.0, st: 15.0, price: 0.28, amount: 0 },
             ]},
             { category: "🥛 糟渣/副产物", items: [
-                { name: "酒糟（鲜）", dm: 22, price: 0.40, amount: 5 },
-                { name: "发酵料", dm: 45, price: 1.20, amount: 2 },
-                { name: "优乐康", dm: 92, price: 5.00, amount: 0.1 },
+                { name: "酒糟（鲜）", dm: 22, cp: 26.0, ee: 9.0, st: 6.0, price: 0.40, amount: 5 },
+                { name: "发酵料", dm: 45, cp: 18.0, ee: 4.0, st: 20.0, price: 1.20, amount: 2 },
+                { name: "优乐康", dm: 92, cp: 20.0, ee: 5.0, st: 15.0, price: 5.00, amount: 0.1 },
             ]},
             { category: "🌾 能量/蛋白原料", items: [
-                { name: "DDGS", dm: 89, price: 1.80, amount: 2 },
-                { name: "麸皮", dm: 86, price: 1.20, amount: 1.5 },
-                { name: "全棉籽", dm: 89, price: 1.50, amount: 1 },
-                { name: "豆粕", dm: 89, price: 3.20, amount: 1 },
-                { name: "玉米", dm: 87, price: 2.50, amount: 4 },
+                { name: "DDGS", dm: 89, cp: 27.0, ee: 11.0, st: 6.0, price: 1.80, amount: 2 },
+                { name: "麸皮", dm: 86, cp: 17.0, ee: 4.0, st: 18.0, price: 1.20, amount: 1.5 },
+                { name: "全棉籽", dm: 89, cp: 23.0, ee: 23.0, st: 5.0, price: 1.50, amount: 1 },
+                { name: "豆粕", dm: 89, cp: 46.0, ee: 1.8, st: 9.0, price: 3.20, amount: 1 },
+                { name: "玉米", dm: 87, cp: 8.5, ee: 3.8, st: 68.0, price: 2.50, amount: 4 },
             ]},
             { category: "🧪 预混料", items: [
-                { name: "5581 预混料", dm: 95, price: 8.50, amount: 0.3 },
-                { name: "5481 预混料", dm: 95, price: 9.00, amount: 0.3 },
+                { name: "5581 预混料", dm: 95, cp: 5.0, ee: 1.0, st: 5.0, price: 8.50, amount: 0.3 },
+                { name: "5481 预混料", dm: 95, cp: 5.0, ee: 1.0, st: 5.0, price: 9.00, amount: 0.3 },
             ]},
             { category: "🍼 犊牛料", items: [
-                { name: "580B 犊牛料", dm: 88, price: 3.80, amount: 0 },
+                { name: "580B 犊牛料", dm: 88, cp: 21.0, ee: 3.5, st: 38.0, price: 3.80, amount: 0 },
             ]},
             { category: "🥩 精补料", items: [
-                { name: "581 精补料", dm: 88, price: 3.50, amount: 3 },
-                { name: "581+ 精补料", dm: 88, price: 3.80, amount: 2 },
+                { name: "581 精补料", dm: 88, cp: 18.0, ee: 3.5, st: 40.0, price: 3.50, amount: 3 },
+                { name: "581+ 精补料", dm: 88, cp: 19.0, ee: 3.5, st: 40.0, price: 3.80, amount: 2 },
             ]},
             { category: "🎯 肉牛浓缩料", items: [
-                { name: "581CE 浓缩料", dm: 88, price: 4.20, amount: 0 },
-                { name: "581C 浓缩料", dm: 88, price: 4.00, amount: 0 },
-                { name: "581CD 浓缩料", dm: 88, price: 4.50, amount: 0 },
-                { name: "581CP 浓缩料", dm: 88, price: 4.30, amount: 0 },
+                { name: "581CE 浓缩料", dm: 88, cp: 38.0, ee: 4.0, st: 15.0, price: 4.20, amount: 0 },
+                { name: "581C 浓缩料", dm: 88, cp: 38.0, ee: 4.0, st: 15.0, price: 4.00, amount: 0 },
+                { name: "581CD 浓缩料", dm: 88, cp: 36.0, ee: 4.0, st: 15.0, price: 4.50, amount: 0 },
+                { name: "581CP 浓缩料", dm: 88, cp: 37.0, ee: 4.0, st: 15.0, price: 4.30, amount: 0 },
             ]}
         ];
 
@@ -568,6 +584,9 @@
                     <td class="raw-name">${mat.name}</td>
                     <td><input type="number" class="diet-input" data-type="amount" data-index="${index}" value="${mat.amount}" min="0" step="0.1"></td>
                     <td><input type="number" class="diet-input" data-type="dm" data-index="${index}" value="${mat.dm}" min="0" max="100" step="0.1"></td>
+                    <td><input type="number" class="diet-input" data-type="cp" data-index="${index}" value="${mat.cp}" min="0" max="100" step="0.1"></td>
+                    <td><input type="number" class="diet-input" data-type="ee" data-index="${index}" value="${mat.ee}" min="0" max="100" step="0.1"></td>
+                    <td><input type="number" class="diet-input" data-type="st" data-index="${index}" value="${mat.st}" min="0" max="100" step="0.1"></td>
                     <td><input type="number" class="diet-input" data-type="price" data-index="${index}" value="${mat.price}" min="0" step="0.01"></td>
                     <td class="auto-calc" id="rowCost_${index}">0.00</td>
                     <td class="auto-calc" id="rowDM_${index}">0.00</td>
@@ -586,6 +605,9 @@
             if (type === "dm") rawMaterials[index].dm = val;
             else if (type === "price") rawMaterials[index].price = val;
             else if (type === "amount") rawMaterials[index].amount = val;
+            else if (type === "cp") rawMaterials[index].cp = val;
+            else if (type === "ee") rawMaterials[index].ee = val;
+            else if (type === "st") rawMaterials[index].st = val;
             calcAll();
         }
 
@@ -629,19 +651,30 @@
             document.getElementById("dailyGain").innerHTML = `${dailyGain.toFixed(3)}<span class="unit">kg/天</span>`;
             document.getElementById("monthGain").innerHTML = `${monthGain.toFixed(1)}<span class="unit">kg/月</span>`;
 
-            // 3. 日粮成本 & 干物质
+            // 3. 日粮成本 & 干物质 & 养分
             let totalDietCost = 0;
             let totalDM = 0;
+            let totalCP = 0, totalEE = 0, totalST = 0;
             rawMaterials.forEach((mat, index) => {
                 const rowCost = mat.amount * mat.price;
                 const rowDM = mat.amount * mat.dm / 100;
                 totalDietCost += rowCost;
                 totalDM += rowDM;
+                totalCP += rowDM * (mat.cp || 0) / 100;
+                totalEE += rowDM * (mat.ee || 0) / 100;
+                totalST += rowDM * (mat.st || 0) / 100;
                 document.getElementById(`rowCost_${index}`).textContent = rowCost.toFixed(2);
                 document.getElementById(`rowDM_${index}`).textContent = rowDM.toFixed(2);
             });
             document.getElementById("dietCost").innerHTML = `${totalDietCost.toFixed(2)}<span class="unit">元/天</span>`;
             document.getElementById("dmi").innerHTML = `${totalDM.toFixed(2)}<span class="unit">kg DM/天</span>`;
+            // TMR养分加权平均（干物质基础）= Σ(各原料干物质×养分%) ÷ 总干物质 × 100
+            const dietCP = totalDM > 0 ? totalCP / totalDM * 100 : 0;
+            const dietEE = totalDM > 0 ? totalEE / totalDM * 100 : 0;
+            const dietST = totalDM > 0 ? totalST / totalDM * 100 : 0;
+            document.getElementById("dietCP").innerHTML = `${dietCP.toFixed(2)}<span class="unit">%</span>`;
+            document.getElementById("dietEE").innerHTML = `${dietEE.toFixed(2)}<span class="unit">%</span>`;
+            document.getElementById("dietST").innerHTML = `${dietST.toFixed(2)}<span class="unit">%</span>`;
 
             // 4. 五项附加成本合计
             const extraDaily = getExtraDailySum();
@@ -683,7 +716,8 @@
                     const data = JSON.parse(saved);
                     // 兼容旧数据（只有10种原料的）
                     if (data.rawMaterials && Array.isArray(data.rawMaterials) && data.rawMaterials.length >= defaultRawMaterials.reduce((s,g)=>s+g.items.length, 0)) {
-                        rawMaterials = data.rawMaterials;
+                        // 逐项与默认值合并,补齐旧数据缺失的 cp/ee/st 等新字段
+                        rawMaterials = data.rawMaterials.map((m, i) => ({ ...(flatMaterials[i] || {}), ...m }));
                     } else if (data.rawMaterials && Array.isArray(data.rawMaterials)) {
                         const savedLen = data.rawMaterials.length;
                         const defaults = JSON.parse(JSON.stringify(flatMaterials));

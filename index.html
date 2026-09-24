@@ -759,10 +759,39 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('./sw.js').then(function(reg) {
+                let refreshing = false;
+                const swRegPromise = navigator.serviceWorker.register('./sw.js');
+                swRegPromise.then(function(reg) {
                     console.log('[PWA] Service Worker 注册成功, scope:', reg.scope);
+
+                    // 有新 SW 下载完成 → 立即 skipWaiting → 激活
+                    reg.addEventListener('updatefound', function() {
+                        const newSW = reg.installing;
+                        console.log('[PWA] 检测到新版本 SW, 正在下载...');
+                        newSW.addEventListener('statechange', function() {
+                            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('[PWA] 新版本 SW 安装完成, 立即激活');
+                                newSW.postMessage('skipWaiting');
+                            }
+                            if (newSW.state === 'activated') {
+                                console.log('[PWA] 新版本 SW 已激活, 页面将自动刷新以加载最新代码');
+                                if (!refreshing) {
+                                    refreshing = true;
+                                    location.reload();
+                                }
+                            }
+                        });
+                    });
                 }).catch(function(err) {
                     console.warn('[PWA] Service Worker 注册失败 (本地文件打开时正常,需HTTPS部署):', err);
+                });
+
+                // SW 控制变更时自动刷新
+                navigator.serviceWorker.addEventListener('controllerchange', function() {
+                    if (!refreshing) {
+                        refreshing = true;
+                        location.reload();
+                    }
                 });
             });
         }

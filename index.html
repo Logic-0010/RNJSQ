@@ -317,12 +317,49 @@
             }
         }
         @media (max-width: 480px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .header h1 {
-                font-size: 20px;
-            }
+            body { padding: 8px; }
+            .header { padding: 12px 14px; margin-bottom: 12px; border-radius: 8px; }
+            .header h1 { font-size: 17px; }
+            .header p { font-size: 11px; }
+            .header-logo .logo-img { height: 36px; }
+            .card { padding: 14px; border-radius: 10px; }
+            .card-title { font-size: 14px; margin-bottom: 10px; padding-bottom: 6px; }
+            .card-title::before { margin-right: 6px; font-size: 10px; }
+            .form-row { grid-template-columns: 1fr; gap: 8px; }
+            .form-group { margin-bottom: 10px; }
+            .form-label { font-size: 12px; }
+            .form-input { padding: 8px 10px; font-size: 13px; }
+            /* 附加成本行: 标签缩小 + 单位折叠 */
+            .extra-item { gap: 4px; margin-bottom: 6px; }
+            .extra-item .form-label { flex: 0 0 60px; font-size: 11px; }
+            .extra-item .form-input { padding: 6px 8px; font-size: 12px; }
+            .extra-item .unit { flex: 0 0 36px; font-size: 10px; }
+            .extra-subtotal { padding: 8px 10px; font-size: 12px; }
+            .extra-subtotal .val { font-size: 14px; }
+            /* 表格: 横向滚动 + 紧凑字体 */
+            .diet-table { font-size: 11px; min-width: 520px; }
+            .diet-table thead th { padding: 6px 3px; font-size: 10px; white-space: nowrap; }
+            .diet-table td { padding: 3px 2px; }
+            .diet-table .raw-name { font-size: 11px; }
+            .diet-table .raw-category { padding: 6px; font-size: 11px; }
+            .diet-input { width: 92%; padding: 3px 2px; font-size: 11px; }
+            .auto-calc { font-size: 10px; }
+            /* 结果卡片紧凑化 */
+            .result-item { padding: 10px 12px; margin-bottom: 8px; border-left-width: 3px; border-radius: 6px; }
+            .result-label { font-size: 11px; margin-bottom: 3px; }
+            .result-value { font-size: 15px; }
+            .result-value .unit { font-size: 10px; }
+            /* 按钮紧凑 */
+            .btn { padding: 8px; font-size: 12px; }
+            .btn-group { gap: 8px; margin-top: 12px; }
+            .main-grid { gap: 12px; }
+        }
+        /* 小屏手机 (≤380px) 进一步压缩 */
+        @media (max-width: 380px) {
+            .header h1 { font-size: 15px; }
+            .diet-table { min-width: 480px; font-size: 10px; }
+            .result-value { font-size: 14px; }
+            .extra-item .form-label { flex: 0 0 54px; font-size: 10px; }
         }
     </style>
 </head>

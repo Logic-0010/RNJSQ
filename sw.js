@@ -9,7 +9,7 @@
 //   CACHE_NAME 每次发布新版本时递增(如 v1 → v2), 旧缓存自动清理
 //   浏览器检测到 sw.js 内容变化 → 下载新版本 → install → activate(skipWaiting + clients.claim)
 
-const CACHE_VERSION = 4;
+const CACHE_VERSION = 5;
 const CACHE_NAME = `beef-ranch-tool-v${CACHE_VERSION}`;
 
 // network-first 的资源(这些必须总是最新)

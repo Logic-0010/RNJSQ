@@ -23,14 +23,18 @@
             box-sizing: border-box;
             font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
         }
-        body {
+        html, body {
             background: #f0f4f8;
             color: #2d3748;
             padding: 15px;
+            overflow-x: hidden;
+            max-width: 100%;
         }
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            width: 100%;
+            overflow-x: hidden;
         }
         .header {
             background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
@@ -107,12 +111,16 @@
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
             gap: 20px;
+            overflow-x: hidden;
+            min-width: 0;
         }
         .card {
             background: white;
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow-x: hidden;
+            min-width: 0;
         }
         .card-title {
             font-size: 16px;

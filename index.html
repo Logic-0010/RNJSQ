@@ -421,10 +421,10 @@
                     <table class="diet-table" id="dietTable">
                         <thead>
                             <tr>
-                                <th style="width:25%">原料名称</th>
-                                <th style="width:14%">干物质(%)</th>
-                                <th style="width:16%">单价(元/kg)</th>
+                                <th style="width:24%">原料名称</th>
                                 <th style="width:17%">添加量(kg鲜重)</th>
+                                <th style="width:15%">干物质(%)</th>
+                                <th style="width:16%">单价(元/kg)</th>
                                 <th style="width:14%">行成本(元)</th>
                                 <th style="width:14%">干物质(kg)</th>
                             </tr>
@@ -566,9 +566,9 @@
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td class="raw-name">${mat.name}</td>
+                    <td><input type="number" class="diet-input" data-type="amount" data-index="${index}" value="${mat.amount}" min="0" step="0.1"></td>
                     <td><input type="number" class="diet-input" data-type="dm" data-index="${index}" value="${mat.dm}" min="0" max="100" step="0.1"></td>
                     <td><input type="number" class="diet-input" data-type="price" data-index="${index}" value="${mat.price}" min="0" step="0.01"></td>
-                    <td><input type="number" class="diet-input" data-type="amount" data-index="${index}" value="${mat.amount}" min="0" step="0.1"></td>
                     <td class="auto-calc" id="rowCost_${index}">0.00</td>
                     <td class="auto-calc" id="rowDM_${index}">0.00</td>
                 `;

@@ -1,4 +1,4 @@
-﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -323,6 +323,7 @@
             padding: 14px 16px;
             margin-top: 12px;
             box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
+            overflow-x: visible;
         }
         .stage-badge {
             display: inline-block;
@@ -335,9 +336,15 @@
             margin-bottom: 12px;
             box-shadow: 0 2px 6px rgba(21, 101, 192, 0.35);
             letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+        .nutrition-table-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .nutrition-compare-table {
             width: 100%;
+            min-width: 480px;
             border-collapse: separate;
             border-spacing: 0;
             font-size: 12px;

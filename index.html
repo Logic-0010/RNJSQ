@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -436,6 +436,7 @@
         .nutrition-verdict.idle { background: #f5f5f5; color: #757575; border: 1px dashed #bdbdbd; font-weight: 400; }
         /* 中屏桌面 (1025~1280px): 营养面板压缩, 保证完整显示 */
         @media (min-width: 1025px) and (max-width: 1280px) {
+            .main-grid { grid-template-columns: 1fr 1.7fr 1.45fr; }
             .nutrition-compare-table { font-size: 10px; min-width: 250px; }
             .nutrition-compare-table th { font-size: 9.5px; padding: 4px 2px; }
             .nutrition-compare-table td { padding: 4px 2px; }
@@ -661,11 +662,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr id="rowDMI"><td>DMI<span class="metric-sub">干物质 kg/天</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
+                            <tr id="rowDMI"><td>DMI<span class="metric-sub">kg/天</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
                             <tr id="rowCP"><td>CP%<span class="metric-sub">粗蛋白</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
                             <tr id="rowST"><td>ST%<span class="metric-sub">淀粉</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
                             <tr id="rowEE"><td>EE%<span class="metric-sub">粗脂肪</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
-                            <tr id="rowRF"><td>精粗比<span class="metric-sub">粗料占DM%</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
+                            <tr id="rowRF"><td>精粗比<span class="metric-sub">DM占比</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
                         </tbody>
                     </table>
                     </div>
@@ -910,11 +911,11 @@
             if (!cur || cur <= 0) return { status: '-', text: '-' };
             if (cur < range[0]) {
                 const dev = Math.round((range[0] - cur) / range[0] * 100);
-                return { status: 'low', text: '↓ 偏低' + dev + '%' };
+                return { status: 'low', text: '↓偏低' + dev + '%' };
             }
             if (cur > range[1]) {
                 const dev = Math.round((cur - range[1]) / range[1] * 100);
-                return { status: 'high', text: '↑ 偏高' + dev + '%' };
+                return { status: 'high', text: '↑偏高' + dev + '%' };
             }
             return { status: 'ok', text: '✓ 达标' };
         }
@@ -963,7 +964,7 @@
                 { key: "ST",  row: rows.ST,  cur: st,   range: std.st,  unit: "%", label: "淀粉", curHtml: null },
                 { key: "EE",  row: rows.EE,  cur: ee,   range: EE_STANDARD, unit: "%", label: "EE", curHtml: null },
                 { key: "RF",  row: rows.RF,  cur: roughPct, range: std.rf, unit: "%", label: "粗料占比",
-                  curHtml: roughPct > 0 ? roughPct.toFixed(1) + '<span class="metric-sub">粗:精 ' + Math.round(roughPct) + ':' + Math.round(100 - roughPct) + '</span>' : "-" }
+                  curHtml: roughPct > 0 ? roughPct.toFixed(1) + '<span class="metric-sub">粗' + Math.round(roughPct) + ':精' + Math.round(100 - roughPct) + '</span>' : "-" }
             ];
             let okCount = 0, devParts = [], activeCount = 0;
             items.forEach(it => {

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -88,10 +88,6 @@
             width: auto;
             display: block;
             object-fit: contain;
-            border-radius: 6px;
-            box-shadow:
-                inset 0 0 10px rgba(255,255,255,0.35),
-                0 2px 8px rgba(0,0,0,0.12);
         }
         .header-logo svg#svgFallback {
             display: none;
@@ -321,48 +317,80 @@
         }
         /* 营养标准对比面板 */
         .nutrition-standard-panel {
-            background: #f5f7fa;
+            background: linear-gradient(160deg, #f8fbff 0%, #eef4fd 100%);
             border: 1px solid #d6e4ff;
-            border-radius: 10px;
-            padding: 12px 14px;
+            border-radius: 12px;
+            padding: 14px 16px;
             margin-top: 12px;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.07);
         }
         .stage-badge {
             display: inline-block;
-            background: #1976d2;
+            background: linear-gradient(135deg, #1e88e5, #1565c0);
             color: #fff;
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 600;
             padding: 4px 12px;
-            border-radius: 14px;
-            margin-bottom: 10px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(21, 101, 192, 0.35);
+            letter-spacing: 0.2px;
         }
         .nutrition-compare-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             font-size: 12px;
             background: #fff;
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
+            box-shadow: 0 1px 4px rgba(30, 60, 120, 0.08);
         }
         .nutrition-compare-table th,
         .nutrition-compare-table td {
-            padding: 7px 6px;
+            padding: 7px 5px;
             text-align: center;
-            border-bottom: 1px solid #edf2f7;
+            border-bottom: 1px solid #eef2f7;
+            white-space: nowrap;
         }
         .nutrition-compare-table th {
-            background: #e3f2fd;
-            color: #1565c0;
+            background: linear-gradient(135deg, #1976d2, #1e88e5);
+            color: #fff;
             font-weight: 600;
             font-size: 11px;
+            letter-spacing: 0.5px;
         }
-        .nutrition-compare-table td.cur { font-weight: 600; }
-        .nutrition-compare-table td.std { color: #5a67d8; font-size: 11px; }
-        .nutrition-compare-table td.status { font-weight: 600; font-size: 11px; }
-        .nutrition-compare-table td.status.ok { color: #2e7d32; }
-        .nutrition-compare-table td.status.low { color: #ef6c00; }
-        .nutrition-compare-table td.status.high { color: #d32f2f; }
+        .nutrition-compare-table tbody tr:nth-child(even) { background: #f7faff; }
+        .nutrition-compare-table tbody tr { transition: background 0.15s; }
+        .nutrition-compare-table tbody tr:hover { background: #e8f2ff; }
+        .nutrition-compare-table td:first-child {
+            font-weight: 700;
+            color: #263238;
+            line-height: 1.3;
+            text-align: left;
+        }
+        .nutrition-compare-table td .metric-sub {
+            font-weight: 400;
+            font-size: 10px;
+            color: #90a4ae;
+            margin-left: 4px;
+        }
+        .nutrition-compare-table td.cur { font-weight: 700; color: #1565c0; font-size: 11.5px; }
+        .nutrition-compare-table td.std {
+            color: #5a67d8;
+            font-size: 10.5px;
+            background: rgba(90, 103, 216, 0.07);
+        }
+        .nutrition-compare-table td.status { font-weight: 600; font-size: 10.5px; }
+        .nutrition-compare-table td.status.ok {
+            color: #2e7d32; background: #e8f5e9;
+        }
+        .nutrition-compare-table td.status.low {
+            color: #ef6c00; background: #fff3e0;
+        }
+        .nutrition-compare-table td.status.high {
+            color: #d32f2f; background: #ffebee;
+        }
         .nutrition-compare-table tr:last-child td { border-bottom: none; }
         @media (max-width: 1024px) {
             .main-grid {
@@ -536,27 +564,6 @@
                 <div class="card-title">实时核算结果</div>
 
                 <div class="result-item">
-                    <div class="result-label">饲养天数</div>
-                    <div class="result-value" id="feedDays">0<span class="unit">天</span></div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label">总增重</div>
-                    <div class="result-value" id="totalGain">0<span class="unit">kg</span></div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label">日增重（ADG）</div>
-                    <div class="result-value" id="dailyGain">0<span class="unit">kg/天</span></div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label">月增重（按30天折算）</div>
-                    <div class="result-value" id="monthGain">0<span class="unit">kg/月</span></div>
-                </div>
-
-                <div class="result-item" style="margin-top:15px;background:#e8f5e9;">
-                    <div class="result-label">TMR日粮总成本（每头每天）</div>
-                    <div class="result-value" id="dietCost" style="color:#2e7d32;">0<span class="unit">元/天</span></div>
-                </div>
-                <div class="result-item">
                     <div class="result-label">总干物质摄入量（DMI）</div>
                     <div class="result-value" id="dmi">0<span class="unit">kg DM/天</span></div>
                 </div>
@@ -579,6 +586,7 @@
                         <span style="margin-right:6px;">📐</span>营养需要量标准对比
                     </div>
                     <div class="stage-badge" id="stageBadge">请输入当前体重</div>
+                    <div class="nutrition-table-scroll">
                     <table class="nutrition-compare-table" id="nutritionCompareTable">
                         <thead>
                             <tr>
@@ -589,15 +597,38 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr id="rowDMI"><td>DMI</td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
-                            <tr id="rowCP"><td>CP%</td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
-                            <tr id="rowST"><td>ST%</td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
-                            <tr id="rowEE"><td>EE%</td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
+                            <tr id="rowDMI"><td>DMI<span class="metric-sub">干物质 kg/天</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
+                            <tr id="rowCP"><td>CP%<span class="metric-sub">粗蛋白</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
+                            <tr id="rowST"><td>ST%<span class="metric-sub">淀粉</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
+                            <tr id="rowEE"><td>EE%<span class="metric-sub">粗脂肪</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
                         </tbody>
                     </table>
-                    <div class="note" style="margin-top:6px;font-size:10px;">
-                        💡 标准依据 NASEM/NRC 肉牛饲养标准简化范围；颜色：<span style="color:#2e7d32;">绿=达标</span> / <span style="color:#ef6c00;">橙=偏低</span> / <span style="color:#d32f2f;">红=偏高</span>
                     </div>
+                    <div class="note" style="margin-top:6px;font-size:10px;">
+                        💡 标准依据肉牛饲养标准表：DMI、CP%按当前体重就近取50kg段（对应日增重1.25~2.0kg/d区间）；淀粉%25~35（日增重1.25~1.5→25%、1.75~2.0→35%）；EE%为行业参考范围3~5%。颜色：<span style="color:#2e7d32;">绿=达标</span> / <span style="color:#ef6c00;">橙=偏低</span> / <span style="color:#d32f2f;">红=偏高</span>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">饲养天数</div>
+                    <div class="result-value" id="feedDays">0<span class="unit">天</span></div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">总增重</div>
+                    <div class="result-value" id="totalGain">0<span class="unit">kg</span></div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">日增重（ADG）</div>
+                    <div class="result-value" id="dailyGain">0<span class="unit">kg/天</span></div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">月增重（按30天折算）</div>
+                    <div class="result-value" id="monthGain">0<span class="unit">kg/月</span></div>
+                </div>
+
+                <div class="result-item" style="margin-top:15px;background:#e8f5e9;">
+                    <div class="result-label">TMR日粮总成本（每头每天）</div>
+                    <div class="result-value" id="dietCost" style="color:#2e7d32;">0<span class="unit">元/天</span></div>
                 </div>
 
                 <div class="result-item" style="background:#fff3e0;">
@@ -747,15 +778,48 @@
             });
         }
 
-        // ============ 营养需要量标准（按体重阶段） ============
-        // 范围: [下限, 上限], 阶段判定依据当前体重
+        // ============ 营养需要量标准（全部按体重就近取段） ============
+        // 各项标准不再按育肥前/中/后期分档, 统一按"当前体重"就近匹配50kg体重段
+        // standardsByWeight: 键=体重kg; 值={ dmi:[...], cp:[...] }
+        //   dmi = DM采食量kg/d, cp = CP%DM, 均取标准表中该体重 日增重1.25~2.0kg/d 对应区间
+        // 数据来源: 肉牛饲养标准表（体重×日增重）
+        const standardsByWeight = {
+            150: { dmi: [4.5, 4.8],   cp: [18.2, 23.0] },
+            200: { dmi: [5.5, 6.0],   cp: [16.0, 19.8] },
+            250: { dmi: [6.5, 7.1],   cp: [14.5, 17.7] },
+            300: { dmi: [7.5, 8.1],   cp: [13.5, 16.3] },
+            350: { dmi: [8.4, 9.2],   cp: [12.7, 15.1] },
+            400: { dmi: [9.2, 10.1],  cp: [12.2, 14.3] },
+            450: { dmi: [10.2, 11.1], cp: [11.7, 13.6] },
+            500: { dmi: [11.0, 12.0], cp: [11.7, 13.2] },
+            550: { dmi: [11.8, 12.9], cp: [11.7, 13.2] },
+            600: { dmi: [12.6, 13.7], cp: [11.7, 13.2] },
+            650: { dmi: [13.3, 14.5], cp: [11.7, 13.2] },
+            700: { dmi: [14.1, 15.5], cp: [11.7, 13.2] }
+        };
+
+        function getWeightStandard(weight) {
+            if (!weight || weight <= 0) return null;
+            const keys = Object.keys(standardsByWeight).map(Number);
+            let nearest = keys[0], bestDiff = Infinity;
+            keys.forEach(k => {
+                const d = Math.abs(weight - k);
+                if (d < bestDiff) { bestDiff = d; nearest = k; }
+            });
+            return { ...standardsByWeight[nearest], kg: nearest };
+        }
+
+        // 淀粉%DM 标准: 标准表仅随日增重分档(1.25~1.5kg/d→25%, 1.75~2.0kg/d→35%), 各体重一致
+        const STARCH_STANDARD = [25, 35];
+        // EE%DM 行业参考范围（标准表未提供EE项, 各体重一致）
+        const EE_STANDARD = [3, 5];
+
+        // 体重阶段标签（仅用于徽章提示当前所处阶段, 不再决定标准数值）
         const nutritionStandards = [
-            { stage: "200-400kg 育肥前期", min: 200, max: 400,
-              dmi: [4.5, 6.5], cp: [14, 16], st: [25, 35], ee: [3, 5] },
-            { stage: "400-500kg 育肥中期", min: 400, max: 500,
-              dmi: [6.5, 8.5], cp: [12, 14], st: [30, 40], ee: [3, 5] },
-            { stage: "500-出栏 育肥后期", min: 500, max: 9999,
-              dmi: [8.5, 11], cp: [11, 13], st: [35, 45], ee: [3, 5] }
+            { stage: "200kg以下 育肥起步期", min: 0, max: 200 },
+            { stage: "200-400kg 育肥前期", min: 200, max: 400 },
+            { stage: "400-500kg 育肥中期", min: 400, max: 500 },
+            { stage: "500kg-出栏 育肥后期", min: 500, max: 9999 }
         ];
 
         function getNutritionStage(weight) {
@@ -763,8 +827,6 @@
             for (const s of nutritionStandards) {
                 if (weight >= s.min && weight < s.max) return s;
             }
-            // 低于 200kg 也按第一阶段处理（犊牛/架子牛过渡）
-            if (weight < 200) return nutritionStandards[0];
             return nutritionStandards[nutritionStandards.length - 1];
         }
 
@@ -797,19 +859,20 @@
                 });
                 return;
             }
-            badge.textContent = "📍 当前阶段：" + stage.stage;
+            const std = getWeightStandard(weight);
+            badge.textContent = "📍 " + stage.stage + " · 标准≈" + std.kg + "kg段";
             badge.style.background = "#1976d2";
 
             const items = [
-                { row: rows.DMI, cur: dmi, range: stage.dmi, unit: "" },
-                { row: rows.CP, cur: cp, range: stage.cp, unit: "%" },
-                { row: rows.ST, cur: st, range: stage.st, unit: "%" },
-                { row: rows.EE, cur: ee, range: stage.ee, unit: "%" }
+                { row: rows.DMI, cur: dmi, range: std.dmi, unit: "" },
+                { row: rows.CP, cur: cp, range: std.cp, unit: "%" },
+                { row: rows.ST, cur: st, range: STARCH_STANDARD, unit: "%" },
+                { row: rows.EE, cur: ee, range: EE_STANDARD, unit: "%" }
             ];
             items.forEach(it => {
                 const cmp = compareValue(it.cur, it.range);
                 it.row.querySelector(".cur").textContent = it.cur > 0 ? it.cur.toFixed(2) + it.unit : "-";
-                it.row.querySelector(".std").textContent = it.range[0] + it.unit + " ~ " + it.range[1] + it.unit;
+                it.row.querySelector(".std").textContent = it.range[0].toFixed(1) + "~" + it.range[1].toFixed(1);
                 const cell = it.row.querySelector(".status");
                 cell.textContent = cmp.text;
                 cell.className = "status " + (cmp.status === '-' ? '' : cmp.status);

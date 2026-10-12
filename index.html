@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -410,6 +410,19 @@
         .nutrition-compare-table td.cur.low { color: #ef6c00; }
         .nutrition-compare-table td.cur.high { color: #d32f2f; }
         .nutrition-compare-table tr:last-child td { border-bottom: none; }
+        .nutrition-verdict {
+            margin-top: 8px;
+            padding: 7px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.55;
+            text-align: left;
+        }
+        .nutrition-verdict.ok { background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; }
+        .nutrition-verdict.warn { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+        .nutrition-verdict.warn b { color: #d84315; }
+        .nutrition-verdict.idle { background: #f5f5f5; color: #757575; border: 1px dashed #bdbdbd; font-weight: 400; }
         @media (max-width: 1024px) {
             .main-grid {
                 grid-template-columns: 1fr;
@@ -619,11 +632,13 @@
                             <tr id="rowCP"><td>CP%<span class="metric-sub">粗蛋白</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
                             <tr id="rowST"><td>ST%<span class="metric-sub">淀粉</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
                             <tr id="rowEE"><td>EE%<span class="metric-sub">粗脂肪</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
+                            <tr id="rowRF"><td>精粗比<span class="metric-sub">粗料占DM%</span></td><td class="cur">0</td><td class="std">-</td><td class="status">-</td></tr>
                         </tbody>
                     </table>
                     </div>
+                    <div class="nutrition-verdict idle" id="nutritionVerdict">请输入当前体重并填写日粮添加量</div>
                     <div class="note" style="margin-top:6px;font-size:10px;">
-                        💡 标准依据肉牛饲养标准表：DMI、CP%按当前体重就近取50kg段（对应日增重1.25~2.0kg/d区间）；淀粉%25~35（日增重1.25~1.5→25%、1.75~2.0→35%）；EE%为行业参考范围3~5%。状态列：<span style="color:#2e7d32;">绿✓=达标</span> / <span style="color:#ef6c00;">橙↓=偏低</span> / <span style="color:#d32f2f;">红↑=偏高</span>，异常项闪烁并标注偏离百分比，当前值同色显示
+                        💡 标准依据 NRC《肉牛营养需要》（第8次修订版, 2016）育肥牛（日增重1.2~1.8kg/d）：DMI、CP%按体重就近取50kg段；淀粉%、精粗比为NRC育肥日粮配套实践区间；EE%为NRC脂肪安全上限参考（3~5%）。状态列：<span style="color:#2e7d32;">绿✓=达标</span> / <span style="color:#ef6c00;">橙↓=偏低</span> / <span style="color:#d32f2f;">红↑=偏高</span>，异常项闪烁并标注偏离百分比，当前值同色显示
                     </div>
                 </div>
 
@@ -796,24 +811,28 @@
             });
         }
 
-        // ============ 营养需要量标准（全部按体重就近取段） ============
+        // ============ 营养需要量标准（NRC 2016 育肥牛, 全部按体重就近取段） ============
         // 各项标准不再按育肥前/中/后期分档, 统一按"当前体重"就近匹配50kg体重段
-        // standardsByWeight: 键=体重kg; 值={ dmi:[...], cp:[...] }
-        //   dmi = DM采食量kg/d, cp = CP%DM, 均取标准表中该体重 日增重1.25~2.0kg/d 对应区间
-        // 数据来源: 肉牛饲养标准表（体重×日增重）
+        // 数据来源: NRC《肉牛营养需要》(第8次修订版, 2016) 生长育肥牛
+        // 体重150~700kg, 对应日增重1.2~1.8kg/d育肥区间
+        // standardsByWeight: 键=体重kg; 值={ dmi, cp, st, rf }
+        //   dmi = DM采食量kg/d (约为体重的1.9~2.9%, 随体重递减)
+        //   cp  = 粗蛋白%DM (随体重递减: 犊牛15%左右 → 大体重10%~11%)
+        //   st  = 淀粉%DM (NRC无淀粉标准项, 取NRC育肥日粮配套实践区间, 随体重递减)
+        //   rf  = 粗饲料占日粮DM比例% (育肥日粮精粗比实践区间, 体重越大粗料越少)
         const standardsByWeight = {
-            150: { dmi: [4.5, 4.8],   cp: [18.2, 23.0] },
-            200: { dmi: [5.5, 6.0],   cp: [16.0, 19.8] },
-            250: { dmi: [6.5, 7.1],   cp: [14.5, 17.7] },
-            300: { dmi: [7.5, 8.1],   cp: [13.5, 16.3] },
-            350: { dmi: [8.4, 9.2],   cp: [12.7, 15.1] },
-            400: { dmi: [9.2, 10.1],  cp: [12.2, 14.3] },
-            450: { dmi: [10.2, 11.1], cp: [11.7, 13.6] },
-            500: { dmi: [11.0, 12.0], cp: [11.7, 13.2] },
-            550: { dmi: [11.8, 12.9], cp: [11.7, 13.2] },
-            600: { dmi: [12.6, 13.7], cp: [11.7, 13.2] },
-            650: { dmi: [13.3, 14.5], cp: [11.7, 13.2] },
-            700: { dmi: [14.1, 15.5], cp: [11.7, 13.2] }
+            150: { dmi: [3.7, 4.5],   cp: [14.0, 16.5], st: [28, 34], rf: [35, 60] },
+            200: { dmi: [4.6, 5.6],   cp: [13.0, 15.0], st: [27, 33], rf: [30, 55] },
+            250: { dmi: [5.6, 6.8],   cp: [12.4, 14.2], st: [26, 32], rf: [30, 50] },
+            300: { dmi: [6.6, 7.9],   cp: [11.8, 13.5], st: [25, 31], rf: [25, 45] },
+            350: { dmi: [7.5, 9.0],   cp: [11.4, 12.9], st: [24, 30], rf: [20, 40] },
+            400: { dmi: [8.4, 10.0],  cp: [11.0, 12.4], st: [23, 30], rf: [18, 35] },
+            450: { dmi: [9.2, 11.0],  cp: [10.8, 12.0], st: [23, 29], rf: [15, 30] },
+            500: { dmi: [9.9, 11.8],  cp: [10.6, 11.7], st: [22, 29], rf: [12, 28] },
+            550: { dmi: [10.6, 12.6], cp: [10.4, 11.5], st: [21, 28], rf: [10, 25] },
+            600: { dmi: [11.3, 13.3], cp: [10.3, 11.3], st: [21, 28], rf: [10, 25] },
+            650: { dmi: [11.9, 14.0], cp: [10.2, 11.2], st: [20, 27], rf: [8, 22] },
+            700: { dmi: [12.5, 14.7], cp: [10.1, 11.1], st: [20, 27], rf: [8, 20] }
         };
 
         function getWeightStandard(weight) {
@@ -827,10 +846,15 @@
             return { ...standardsByWeight[nearest], kg: nearest };
         }
 
-        // 淀粉%DM 标准: 标准表仅随日增重分档(1.25~1.5kg/d→25%, 1.75~2.0kg/d→35%), 各体重一致
-        const STARCH_STANDARD = [25, 35];
-        // EE%DM 行业参考范围（标准表未提供EE项, 各体重一致）
+        // EE%DM: NRC育肥日粮脂肪安全参考范围（总脂肪≤5%DM防瘤胃消化抑制, 各体重一致）
         const EE_STANDARD = [3, 5];
+
+        // 粗饲料判定: 按分组类别或名称识别（用于精粗比计算）
+        function isRoughageMat(mat) {
+            if (mat._group && mat._group.indexOf("粗饲料") >= 0) return true;
+            const n = mat.name || "";
+            return n.indexOf("秸秆") >= 0 || n.indexOf("青贮") >= 0 || n.indexOf("黄贮") >= 0;
+        }
 
         // 体重阶段标签（仅用于徽章提示当前所处阶段, 不再决定标准数值）
         const nutritionStandards = [
@@ -862,48 +886,85 @@
             return { status: 'ok', text: '✓ 达标' };
         }
 
-        function renderNutritionCompare(weight, dmi, cp, st, ee) {
+        function renderNutritionCompare(weight, dmi, cp, st, ee, roughPct) {
             const badge = document.getElementById("stageBadge");
+            const verdict = document.getElementById("nutritionVerdict");
             const rows = {
                 DMI: document.getElementById("rowDMI"),
                 CP: document.getElementById("rowCP"),
                 ST: document.getElementById("rowST"),
-                EE: document.getElementById("rowEE")
+                EE: document.getElementById("rowEE"),
+                RF: document.getElementById("rowRF")
             };
             const stage = getNutritionStage(weight);
             if (!stage) {
                 badge.textContent = "请输入当前体重";
                 badge.style.background = "#9e9e9e";
-                ["DMI","CP","ST","EE"].forEach(k => {
+                ["DMI","CP","ST","EE","RF"].forEach(k => {
                     const c = rows[k].querySelector(".cur");
                     c.textContent = "-";
                     c.className = "cur";
-                    const st = rows[k].querySelector(".status");
-                    st.textContent = "-";
-                    st.className = "status";
+                    const s = rows[k].querySelector(".status");
+                    s.textContent = "-";
+                    s.className = "status";
                 });
+                rows.DMI.querySelector(".std").textContent = "-";
+                rows.CP.querySelector(".std").textContent = "-";
+                rows.ST.querySelector(".std").textContent = "-";
+                rows.EE.querySelector(".std").textContent = "3.0~5.0";
+                rows.RF.querySelector(".std").textContent = "-";
+                verdict.textContent = "请输入当前体重并填写日粮添加量";
+                verdict.className = "nutrition-verdict idle";
                 return;
             }
             const std = getWeightStandard(weight);
-            badge.textContent = "📍 " + stage.stage + " · 标准≈" + std.kg + "kg段";
+            badge.textContent = "📍 " + stage.stage + " · NRC标准≈" + std.kg + "kg段";
             badge.style.background = "#1976d2";
 
+            // DMI占体重%（NRC育肥牛约1.9~2.9% BW, 随体重递减）
+            const dmiPct = (weight > 0 && dmi > 0) ? dmi / weight * 100 : 0;
             const items = [
-                { row: rows.DMI, cur: dmi, range: std.dmi, unit: "" },
-                { row: rows.CP, cur: cp, range: std.cp, unit: "%" },
-                { row: rows.ST, cur: st, range: STARCH_STANDARD, unit: "%" },
-                { row: rows.EE, cur: ee, range: EE_STANDARD, unit: "%" }
+                { key: "DMI", row: rows.DMI, cur: dmi,  range: std.dmi, unit: "",  label: "DMI",
+                  curHtml: dmi > 0 ? dmi.toFixed(2) + (dmiPct > 0 ? '<span class="metric-sub">占体重' + dmiPct.toFixed(1) + '%</span>' : '') : "-" },
+                { key: "CP",  row: rows.CP,  cur: cp,   range: std.cp,  unit: "%", label: "CP",  curHtml: null },
+                { key: "ST",  row: rows.ST,  cur: st,   range: std.st,  unit: "%", label: "淀粉", curHtml: null },
+                { key: "EE",  row: rows.EE,  cur: ee,   range: EE_STANDARD, unit: "%", label: "EE", curHtml: null },
+                { key: "RF",  row: rows.RF,  cur: roughPct, range: std.rf, unit: "%", label: "粗料占比",
+                  curHtml: roughPct > 0 ? roughPct.toFixed(1) + '<span class="metric-sub">粗:精 ' + Math.round(roughPct) + ':' + Math.round(100 - roughPct) + '</span>' : "-" }
             ];
+            let okCount = 0, devParts = [], activeCount = 0;
             items.forEach(it => {
                 const cmp = compareValue(it.cur, it.range);
                 const curCell = it.row.querySelector(".cur");
-                curCell.textContent = it.cur > 0 ? it.cur.toFixed(2) + it.unit : "-";
-                curCell.className = "cur" + (cmp.status === '-' || it.cur <= 0 ? '' : ' ' + cmp.status);
+                if (it.curHtml !== null) {
+                    curCell.innerHTML = it.curHtml;
+                    curCell.className = "cur" + (cmp.status === '-' || it.cur <= 0 ? '' : ' ' + cmp.status);
+                } else {
+                    curCell.textContent = it.cur > 0 ? it.cur.toFixed(2) + it.unit : "-";
+                    curCell.className = "cur" + (cmp.status === '-' || it.cur <= 0 ? '' : ' ' + cmp.status);
+                }
                 it.row.querySelector(".std").textContent = it.range[0].toFixed(1) + "~" + it.range[1].toFixed(1);
                 const cell = it.row.querySelector(".status");
                 cell.textContent = cmp.text;
                 cell.className = "status " + (cmp.status === '-' ? '' : cmp.status);
+                // 汇总整体结论
+                if (it.cur > 0) {
+                    activeCount++;
+                    if (cmp.status === 'ok') okCount++;
+                    else if (cmp.status !== '-') devParts.push(it.label + " " + cmp.text);
+                }
             });
+            // 整体结论横幅
+            if (activeCount === 0) {
+                verdict.textContent = "请填写日粮添加量以生成NRC对比结论";
+                verdict.className = "nutrition-verdict idle";
+            } else if (devParts.length === 0) {
+                verdict.textContent = "✓ 日粮营养整体达标：" + activeCount + "项指标全部符合NRC " + std.kg + "kg段标准";
+                verdict.className = "nutrition-verdict ok";
+            } else {
+                verdict.innerHTML = "⚠ " + activeCount + "项中" + devParts.length + "项偏离NRC标准：" + devParts.map(t => "<b>" + t + "</b>").join("、") + (okCount > 0 ? "（其余" + okCount + "项达标）" : "");
+                verdict.className = "nutrition-verdict warn";
+            }
         }
 
         // ============ 五项附加成本求和 ============
@@ -977,9 +1038,15 @@
             document.getElementById("meatCost").innerHTML = `${meatCost.toFixed(2)}<span class="unit">元/kg 增重</span>`;
             document.getElementById("totalCost").innerHTML = `${totalCost.toFixed(2)}<span class="unit">元/kg 增重</span>`;
 
-            // 7. 营养需要量标准对比（依据当前体重判定阶段）
+            // 7. 营养需要量标准对比（依据当前体重判定阶段, NRC标准）
             const currentWeight = parseFloat(document.getElementById("currentWeight").value) || 0;
-            renderNutritionCompare(currentWeight, totalDM, dietCP, dietST, dietEE);
+            // 粗饲料DM占比（精粗比对比用）: 粗饲料组DM ÷ 总DM × 100
+            let roughDM = 0;
+            rawMaterials.forEach(mat => {
+                if (isRoughageMat(mat)) roughDM += mat.amount * mat.dm / 100;
+            });
+            const roughPct = totalDM > 0 ? roughDM / totalDM * 100 : 0;
+            renderNutritionCompare(currentWeight, totalDM, dietCP, dietST, dietEE, roughPct);
         }
 
         // ============ 本地存储 ============

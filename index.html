@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -381,16 +381,34 @@
             font-size: 10.5px;
             background: rgba(90, 103, 216, 0.07);
         }
-        .nutrition-compare-table td.status { font-weight: 600; font-size: 10.5px; }
+        .nutrition-compare-table td.status { font-weight: 700; font-size: 10.5px; }
         .nutrition-compare-table td.status.ok {
-            color: #2e7d32; background: #e8f5e9;
+            background: linear-gradient(135deg, #43a047, #1b5e20);
+            color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(46, 125, 50, 0.4);
         }
         .nutrition-compare-table td.status.low {
-            color: #ef6c00; background: #fff3e0;
+            background: linear-gradient(135deg, #fb8c00, #e65100);
+            color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 5px rgba(230, 81, 0, 0.45);
+            animation: statusPulse 1.6s ease-in-out infinite;
         }
         .nutrition-compare-table td.status.high {
-            color: #d32f2f; background: #ffebee;
+            background: linear-gradient(135deg, #e53935, #b71c1c);
+            color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 5px rgba(183, 28, 28, 0.45);
+            animation: statusPulse 1.6s ease-in-out infinite;
         }
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .nutrition-compare-table td.cur.ok { color: #2e7d32; }
+        .nutrition-compare-table td.cur.low { color: #ef6c00; }
+        .nutrition-compare-table td.cur.high { color: #d32f2f; }
         .nutrition-compare-table tr:last-child td { border-bottom: none; }
         @media (max-width: 1024px) {
             .main-grid {
@@ -605,7 +623,7 @@
                     </table>
                     </div>
                     <div class="note" style="margin-top:6px;font-size:10px;">
-                        💡 标准依据肉牛饲养标准表：DMI、CP%按当前体重就近取50kg段（对应日增重1.25~2.0kg/d区间）；淀粉%25~35（日增重1.25~1.5→25%、1.75~2.0→35%）；EE%为行业参考范围3~5%。颜色：<span style="color:#2e7d32;">绿=达标</span> / <span style="color:#ef6c00;">橙=偏低</span> / <span style="color:#d32f2f;">红=偏高</span>
+                        💡 标准依据肉牛饲养标准表：DMI、CP%按当前体重就近取50kg段（对应日增重1.25~2.0kg/d区间）；淀粉%25~35（日增重1.25~1.5→25%、1.75~2.0→35%）；EE%为行业参考范围3~5%。状态列：<span style="color:#2e7d32;">绿✓=达标</span> / <span style="color:#ef6c00;">橙↓=偏低</span> / <span style="color:#d32f2f;">红↑=偏高</span>，异常项闪烁并标注偏离百分比，当前值同色显示
                     </div>
                 </div>
 
@@ -833,9 +851,15 @@
         // 对比单项: 返回 {status: 'ok'|'low'|'high'|'-', text}
         function compareValue(cur, range) {
             if (!cur || cur <= 0) return { status: '-', text: '-' };
-            if (cur < range[0]) return { status: 'low', text: '偏低' };
-            if (cur > range[1]) return { status: 'high', text: '偏高' };
-            return { status: 'ok', text: '达标' };
+            if (cur < range[0]) {
+                const dev = Math.round((range[0] - cur) / range[0] * 100);
+                return { status: 'low', text: '↓ 偏低' + dev + '%' };
+            }
+            if (cur > range[1]) {
+                const dev = Math.round((cur - range[1]) / range[1] * 100);
+                return { status: 'high', text: '↑ 偏高' + dev + '%' };
+            }
+            return { status: 'ok', text: '✓ 达标' };
         }
 
         function renderNutritionCompare(weight, dmi, cp, st, ee) {
@@ -851,8 +875,9 @@
                 badge.textContent = "请输入当前体重";
                 badge.style.background = "#9e9e9e";
                 ["DMI","CP","ST","EE"].forEach(k => {
-                    rows[k].querySelector(".cur").textContent = "-";
-                    rows[k].querySelector(".std").textContent = "-";
+                    const c = rows[k].querySelector(".cur");
+                    c.textContent = "-";
+                    c.className = "cur";
                     const st = rows[k].querySelector(".status");
                     st.textContent = "-";
                     st.className = "status";
@@ -871,7 +896,9 @@
             ];
             items.forEach(it => {
                 const cmp = compareValue(it.cur, it.range);
-                it.row.querySelector(".cur").textContent = it.cur > 0 ? it.cur.toFixed(2) + it.unit : "-";
+                const curCell = it.row.querySelector(".cur");
+                curCell.textContent = it.cur > 0 ? it.cur.toFixed(2) + it.unit : "-";
+                curCell.className = "cur" + (cmp.status === '-' || it.cur <= 0 ? '' : ' ' + cmp.status);
                 it.row.querySelector(".std").textContent = it.range[0].toFixed(1) + "~" + it.range[1].toFixed(1);
                 const cell = it.row.querySelector(".status");
                 cell.textContent = cmp.text;

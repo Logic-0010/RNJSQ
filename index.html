@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -341,10 +341,12 @@
         .nutrition-table-scroll {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            width: 100%;
+            max-width: 100%;
         }
         .nutrition-compare-table {
             width: 100%;
-            min-width: 480px;
+            min-width: 360px;
             border-collapse: separate;
             border-spacing: 0;
             font-size: 12px;
@@ -355,7 +357,7 @@
         }
         .nutrition-compare-table th,
         .nutrition-compare-table td {
-            padding: 7px 5px;
+            padding: 5px 3px;
             text-align: center;
             border-bottom: 1px solid #eef2f7;
             white-space: nowrap;
@@ -472,6 +474,16 @@
             .btn { padding: 8px; font-size: 12px; }
             .btn-group { gap: 8px; margin-top: 12px; }
             .main-grid { gap: 12px; }
+            /* 营养对比表: 小屏紧凑化 */
+            .nutrition-compare-table { min-width: 300px; font-size: 11px; }
+            .nutrition-compare-table th { font-size: 10px; padding: 4px 2px; }
+            .nutrition-compare-table td { padding: 4px 2px; }
+            .nutrition-compare-table td .metric-sub { font-size: 9px; }
+            .nutrition-compare-table td.cur { font-size: 10.5px; }
+            .nutrition-compare-table td.std { font-size: 9.5px; }
+            .nutrition-compare-table td.status { font-size: 9.5px; }
+            .nutrition-verdict { font-size: 10px; padding: 5px 8px; }
+            .stage-badge { font-size: 10.5px; padding: 3px 8px; }
         }
         /* 小屏手机 (≤380px) 进一步压缩 */
         @media (max-width: 380px) {
